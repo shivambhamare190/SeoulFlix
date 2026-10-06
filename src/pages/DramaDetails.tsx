@@ -90,6 +90,7 @@ const DramaDetails: React.FC = () => {
           src={`https://player.vidzee.wtf/embed/tv/${id}/${season}/${episode}`}
           allowFullScreen
           title="VidZee Player"
+          sandbox="allow-scripts allow-same-origin allow-forms allow-presentation"
         ></iframe>
       </div>
 
