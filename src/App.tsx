@@ -5,6 +5,7 @@ import Home from './pages/Home';
 import DramaDetails from './pages/DramaDetails';
 import { Play, Search } from 'lucide-react';
 import './index.css';
+import { Analytics } from "@vercel/analytics/react";
 
 const API_KEY = import.meta.env.VITE_TMDB_API_KEY || '';
 const BASE_URL = 'https://api.themoviedb.org/3';
@@ -125,6 +126,7 @@ function App() {
             <Route path="/drama/:id" element={<DramaDetails />} />
           </Routes>
         </main>
+        <Analytics />
       </div>
     </Router>
   );
