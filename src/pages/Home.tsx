@@ -46,7 +46,7 @@ const Home: React.FC = () => {
   
   const observer = useRef<IntersectionObserver | null>(null);
   
-  const lastElementRef = useCallback((node: HTMLDivElement | null) => {
+  const lastElementRef = useCallback((node: HTMLAnchorElement | null) => {
     if (loadingMore || initialLoading) return;
     if (observer.current) observer.current.disconnect();
     
