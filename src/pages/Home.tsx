@@ -29,7 +29,8 @@ interface Category {
 
 const Home: React.FC = () => {
   const [categories, setCategories] = useState<Category[]>([]);
-  const [featured, setFeatured] = useState<Drama | null>(null);
+  const [featuredDramas, setFeaturedDramas] = useState<Drama[]>([]);
+  const [currentSlide, setCurrentSlide] = useState(0);
   
   // Infinite scroll state
   const [infiniteDramas, setInfiniteDramas] = useState<Drama[]>([]);
@@ -86,7 +87,7 @@ const Home: React.FC = () => {
         ]);
 
         const trendingDramas = filterAvailable(trending.data.results);
-        if (trendingDramas.length > 0) setFeatured(trendingDramas[0]);
+        if (trendingDramas.length > 0) setFeaturedDramas(trendingDramas.slice(0, 5));
 
         setCategories([
           { title: 'Trending Now', id: 'trending', dramas: trendingDramas.slice(0, 12) },
@@ -146,6 +147,14 @@ const Home: React.FC = () => {
     fetchInfiniteData();
   }, [query, page]);
 
+  useEffect(() => {
+    if (featuredDramas.length === 0 || query) return;
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % featuredDramas.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [featuredDramas.length, query]);
+
   if (initialLoading) return <div className="loader">Loading...</div>;
 
   if (errorMsg) {
@@ -189,21 +198,45 @@ const Home: React.FC = () => {
   return (
     <div>
       {/* Hero Section (Only when not searching) */}
-      {featured && !query && (
+      {featuredDramas.length > 0 && !query && (
         <div 
           className="hero"
-          style={{ backgroundImage: `url(${BACKDROP_BASE_URL}${featured.backdrop_path})` }}
+          style={{ 
+            backgroundImage: `url(${BACKDROP_BASE_URL}${featuredDramas[currentSlide].backdrop_path})`,
+            transition: 'background-image 0.5s ease-in-out',
+            position: 'relative'
+          }}
         >
           <div className="hero-content">
-            <h1 className="hero-title">{featured.name}</h1>
+            <h1 className="hero-title">{featuredDramas[currentSlide].name}</h1>
             <div className="hero-meta">
-              <span className="rating"><Star size={14} fill="#ffffff" /> {featured.vote_average?.toFixed(1)}</span>
-              <span>{featured.first_air_date?.substring(0, 4)}</span>
+              <span className="rating"><Star size={14} fill="#ffffff" /> {featuredDramas[currentSlide].vote_average?.toFixed(1)}</span>
+              <span>{featuredDramas[currentSlide].first_air_date?.substring(0, 4)}</span>
             </div>
-            <p className="hero-desc">{featured.overview}</p>
-            <Link to={`/drama/${featured.id}`} className="btn btn-primary">
+            <p className="hero-desc">{featuredDramas[currentSlide].overview}</p>
+            <Link to={`/drama/${featuredDramas[currentSlide].id}`} className="btn btn-primary">
               Watch Now
             </Link>
+          </div>
+          
+          <div className="slider-dots" style={{ position: 'absolute', bottom: '2rem', left: '0', right: '0', display: 'flex', justifyContent: 'center', gap: '0.5rem' }}>
+            {featuredDramas.map((_, idx) => (
+              <button 
+                key={idx} 
+                onClick={() => setCurrentSlide(idx)}
+                style={{ 
+                  width: '8px', 
+                  height: '8px', 
+                  borderRadius: '50%', 
+                  background: currentSlide === idx ? '#fff' : 'rgba(255,255,255,0.4)',
+                  border: 'none',
+                  cursor: 'pointer',
+                  padding: 0,
+                  transition: 'background 0.3s'
+                }}
+                aria-label={`Go to slide ${idx + 1}`}
+              />
+            ))}
           </div>
         </div>
       )}
