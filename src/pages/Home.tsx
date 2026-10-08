@@ -199,27 +199,44 @@ const Home: React.FC = () => {
     <div>
       {/* Hero Section (Only when not searching) */}
       {featuredDramas.length > 0 && !query && (
-        <div 
-          className="hero"
-          style={{ 
-            backgroundImage: `url(${BACKDROP_BASE_URL}${featuredDramas[currentSlide].backdrop_path})`,
-            transition: 'background-image 0.5s ease-in-out',
-            position: 'relative'
-          }}
-        >
-          <div className="hero-content">
-            <h1 className="hero-title">{featuredDramas[currentSlide].name}</h1>
-            <div className="hero-meta">
-              <span className="rating"><Star size={14} fill="#ffffff" /> {featuredDramas[currentSlide].vote_average?.toFixed(1)}</span>
-              <span>{featuredDramas[currentSlide].first_air_date?.substring(0, 4)}</span>
-            </div>
-            <p className="hero-desc">{featuredDramas[currentSlide].overview}</p>
-            <Link to={`/drama/${featuredDramas[currentSlide].id}`} className="btn btn-primary">
-              Watch Now
-            </Link>
+        <div className="hero-slider" style={{ position: 'relative', overflow: 'hidden', height: '80vh' }}>
+          <div 
+            className="slider-track"
+            style={{
+              display: 'flex',
+              height: '100%',
+              width: '100%',
+              transform: `translateX(-${currentSlide * 100}%)`,
+              transition: 'transform 0.5s ease-in-out'
+            }}
+          >
+            {featuredDramas.map((drama, idx) => (
+              <div 
+                key={idx}
+                className="hero"
+                style={{ 
+                  flex: '0 0 100%',
+                  width: '100%',
+                  height: '100%',
+                  backgroundImage: `url(${BACKDROP_BASE_URL}${drama.backdrop_path})`
+                }}
+              >
+                <div className="hero-content">
+                  <h1 className="hero-title">{drama.name}</h1>
+                  <div className="hero-meta">
+                    <span className="rating"><Star size={14} fill="#ffffff" /> {drama.vote_average?.toFixed(1)}</span>
+                    <span>{drama.first_air_date?.substring(0, 4)}</span>
+                  </div>
+                  <p className="hero-desc">{drama.overview}</p>
+                  <Link to={`/drama/${drama.id}`} className="btn btn-primary">
+                    Watch Now
+                  </Link>
+                </div>
+              </div>
+            ))}
           </div>
           
-          <div className="slider-dots" style={{ position: 'absolute', bottom: '2rem', left: '0', right: '0', display: 'flex', justifyContent: 'center', gap: '0.5rem' }}>
+          <div className="slider-dots" style={{ position: 'absolute', bottom: '2rem', left: '0', right: '0', display: 'flex', justifyContent: 'center', gap: '0.5rem', zIndex: 10 }}>
             {featuredDramas.map((_, idx) => (
               <button 
                 key={idx} 
