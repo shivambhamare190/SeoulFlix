@@ -87,9 +87,12 @@ const DramaDetails: React.FC = () => {
     <div className="player-container">
       <div className="video-wrapper">
         <iframe 
-          src={`https://player.vidzee.wtf/embed/tv/${id}/${season}/${episode}`}
+          src={`https://vidy.st/tv/${id}/${season}/${episode}?nextEpisode=true&episodeSelector=true`}
+          width="100%"
+          height="100%"
           allowFullScreen
-          title="VidZee Player"
+          allow="encrypted-media; autoplay *; fullscreen *"
+          title="Vidy Player"
         ></iframe>
       </div>
 
