@@ -218,7 +218,13 @@ const Home: React.FC = () => {
                   flex: '0 0 100%',
                   width: '100%',
                   height: '100%',
-                  backgroundImage: `url(${BACKDROP_BASE_URL}${drama.backdrop_path})`
+                  backgroundImage: `url(${BACKDROP_BASE_URL}${drama.backdrop_path})`,
+                  display: 'flex',
+                  alignItems: 'flex-end',
+                  paddingBottom: '6rem', // Force content to bottom
+                  paddingLeft: '4%',
+                  backgroundPosition: 'top center',
+                  backgroundSize: 'cover'
                 }}
               >
                 <div className="hero-content">

@@ -170,7 +170,7 @@ a {
 
 .main-content {
   flex: 1;
-  margin-top: 85px; /* Offset for the fixed navbar */
+  margin-top: 95px; /* Offset for the fixed navbar */
 }
 
 /* Hero Section */
