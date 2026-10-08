@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
-import { Star } from 'lucide-react';
+import { Star, Maximize } from 'lucide-react';
 
 const API_KEY = import.meta.env.VITE_TMDB_API_KEY || '';
 const BASE_URL = 'https://api.themoviedb.org/3';
@@ -39,6 +39,15 @@ const DramaDetails: React.FC = () => {
   const [season, setSeason] = useState(1);
   const [episode, setEpisode] = useState(1);
   const [episodesLoading, setEpisodesLoading] = useState(false);
+  const playerRef = useRef<HTMLDivElement>(null);
+
+  const handleFullscreen = () => {
+    if (playerRef.current) {
+      if (playerRef.current.requestFullscreen) {
+        playerRef.current.requestFullscreen();
+      }
+    }
+  };
 
   useEffect(() => {
     const fetchDetails = async () => {
@@ -85,15 +94,33 @@ const DramaDetails: React.FC = () => {
 
   return (
     <div className="player-container">
-      <div className="video-wrapper">
+      <div className="video-wrapper" ref={playerRef}>
         <iframe 
-          src={`https://vidy.st/tv/${id}/${season}/${episode}?nextEpisode=true&episodeSelector=true`}
-          width="100%"
-          height="100%"
+          src={`https://player.vidzee.wtf/embed/tv/${id}/${season}/${episode}`}
           allowFullScreen
-          allow="encrypted-media; autoplay *; fullscreen *"
-          title="Vidy Player"
+          title="VidZee Player"
         ></iframe>
+      </div>
+      <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '0.5rem', marginBottom: '1.5rem' }}>
+        <button 
+          onClick={handleFullscreen}
+          style={{
+            background: 'var(--surface-color, rgba(255,255,255,0.1))',
+            color: 'white',
+            border: '1px solid var(--border-color, rgba(255,255,255,0.2))',
+            borderRadius: '4px',
+            padding: '8px 16px',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            transition: 'background 0.2s'
+          }}
+          title="Fullscreen"
+        >
+          <Maximize size={18} />
+          <span style={{ fontSize: '0.9rem', fontWeight: 500 }}>Fullscreen</span>
+        </button>
       </div>
 
       <div className="details-header" style={{ display: 'flex', gap: '2rem' }}>
