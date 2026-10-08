@@ -181,7 +181,7 @@ a {
   align-items: flex-end;
   padding: 6% 4%;
   background-size: cover;
-  background-position: center;
+  background-position: top center;
 }
 
 .hero::after {
