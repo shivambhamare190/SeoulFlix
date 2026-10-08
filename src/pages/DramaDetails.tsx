@@ -40,11 +40,28 @@ const DramaDetails: React.FC = () => {
   const [episode, setEpisode] = useState(1);
   const [episodesLoading, setEpisodesLoading] = useState(false);
   const playerRef = useRef<HTMLDivElement>(null);
+  const [isFakeFullscreen, setIsFakeFullscreen] = useState(false);
 
   const handleFullscreen = () => {
-    if (playerRef.current) {
-      if (playerRef.current.requestFullscreen) {
-        playerRef.current.requestFullscreen();
+    const elem = playerRef.current as any;
+    if (elem) {
+      try {
+        if (elem.requestFullscreen) {
+          const promise = elem.requestFullscreen();
+          if (promise) {
+            promise.catch(() => {
+              setIsFakeFullscreen(!isFakeFullscreen);
+            });
+          }
+        } else if (elem.webkitRequestFullscreen) {
+          elem.webkitRequestFullscreen();
+        } else if (elem.msRequestFullscreen) {
+          elem.msRequestFullscreen();
+        } else {
+          setIsFakeFullscreen(!isFakeFullscreen);
+        }
+      } catch (e) {
+        setIsFakeFullscreen(!isFakeFullscreen);
       }
     }
   };
@@ -94,12 +111,48 @@ const DramaDetails: React.FC = () => {
 
   return (
     <div className="player-container">
-      <div className="video-wrapper" ref={playerRef}>
+      <div 
+        className="video-wrapper" 
+        ref={playerRef}
+        style={isFakeFullscreen ? {
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100vw',
+          height: '100vh',
+          zIndex: 9999,
+          background: 'black',
+          padding: 0,
+          margin: 0
+        } : {}}
+      >
         <iframe 
           src={`https://player.vidzee.wtf/embed/tv/${id}/${season}/${episode}`}
           allowFullScreen
           title="VidZee Player"
+          style={isFakeFullscreen ? { height: '100%', width: '100%' } : {}}
         ></iframe>
+        {isFakeFullscreen && (
+          <button 
+            onClick={() => setIsFakeFullscreen(false)}
+            style={{
+              position: 'absolute',
+              top: '20px',
+              right: '20px',
+              background: 'rgba(0,0,0,0.6)',
+              color: 'white',
+              border: '1px solid rgba(255,255,255,0.4)',
+              borderRadius: '6px',
+              padding: '8px 16px',
+              cursor: 'pointer',
+              zIndex: 10000,
+              fontSize: '14px',
+              fontWeight: 500
+            }}
+          >
+            Exit Fullscreen
+          </button>
+        )}
       </div>
       <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '0.5rem', marginBottom: '1.5rem' }}>
         <button 
